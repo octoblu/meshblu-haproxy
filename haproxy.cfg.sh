@@ -21,6 +21,7 @@ defaults
   option httpchk                                           # enable HTTP protocol to check on servers health
   stats auth opsworks:0ct0b1u2014
   stats uri /haproxy?stats
+  cookie MESHBLUSRV insert indirect nocache
 
 backend meshblu-http
   balance leastconn
@@ -38,7 +39,7 @@ backend meshblu-original-flavor
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-original-flavor $SERVER:61723 check-send-proxy send-proxy check inter 10s"
+  echo "server meshblu-original-flavor-$SERVER $SERVER:61723 cookie check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
@@ -58,7 +59,7 @@ backend meshblu-websocket
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-websocket $SERVER:61723 check-send-proxy send-proxy check inter 10s"
+  echo "server meshblu-websocket-$SERVER $SERVER:61723 cookie check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
@@ -78,7 +79,7 @@ backend meshblu-socket-io
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-socket-io $SERVER:61723 check-send-proxy send-proxy check inter 10s"
+  echo "server meshblu-socket-io-$SERVER $SERVER:61723 cookie check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
@@ -90,7 +91,7 @@ backend meshblu-mqtt
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-mqtt $SERVER:52377"
+  echo "server meshblu-mqtt-$SERVER $SERVER:52377"
 done
 
 cat <<EOF
