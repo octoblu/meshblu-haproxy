@@ -39,7 +39,7 @@ backend meshblu-original-flavor
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-original-flavor-$SERVER $SERVER:61723 cookie check-send-proxy send-proxy check inter 10s"
+  echo "server meshblu-original-flavor-$SERVER $SERVER:61723 check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
@@ -47,6 +47,7 @@ cat <<EOF
 
 backend meshblu-websocket
   balance source
+  appsession MESHBLUSRV len 66 timeout 24h request-learn prefix
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
@@ -67,6 +68,7 @@ cat <<EOF
 
 backend meshblu-socket-io
   balance source
+  appsession MESHBLUSRV len 66 timeout 24h request-learn prefix
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
