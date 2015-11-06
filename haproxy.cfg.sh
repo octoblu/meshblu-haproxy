@@ -2,23 +2,24 @@
 cat <<EOF
 global
   stats socket /tmp/haproxy.sock
+  maxconn 80000
 
 defaults
   log    global
   mode   http
-  timeout client 60s             # Client and server timeout must match the longest
-  timeout server 300s             # time we may wait for a response from the server.
-  timeout queue  120s              # Don't queue requests too long if saturated.
+  timeout client 60s            # Client and server timeout must match the longest
+  timeout server 300s           # time we may wait for a response from the server.
+  timeout queue  120s           # Don't queue requests too long if saturated.
   timeout connect 10s           # There's no reason to change this one.
-  timeout http-request 300s	# A complete request may never take that long.
+  timeout http-request 300s     # A complete request may never take that long.
   timeout tunnel 2h
   retries         3
   option redispatch
   option httplog
   option dontlognull
-  option http-server-close                                 # enable HTTP connection closing on the server side
-  option abortonclose                                      # enable early dropping of aborted requests from pending queue
-  option httpchk                                           # enable HTTP protocol to check on servers health
+  option http-server-close      # enable HTTP connection closing on the server side
+  option abortonclose           # enable early dropping of aborted requests from pending queue
+  option httpchk                # enable HTTP protocol to check on servers health
   stats auth opsworks:0ct0b1u2014
   stats uri /haproxy?stats
   cookie MESHBLUSRV insert indirect nocache
