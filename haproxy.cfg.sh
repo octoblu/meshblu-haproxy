@@ -1,3 +1,5 @@
+#!/bin/bash
+cat <<EOF
 global
   stats socket /tmp/haproxy.sock
 
@@ -33,7 +35,13 @@ backend meshblu-original-flavor
   option redispatch
   option forwardfor
   option httpchk GET /healthcheck
-  server meshblu-original-flavor 172.17.42.1:61723 check-send-proxy send-proxy
+EOF
+
+for SERVER in $SERVERS; do
+  echo "server meshblu-original-flavor $SERVER:61723 check-send-proxy send-proxy check inter 10s"
+done
+
+cat <<EOF
   http-request set-header Host meshblu.octoblu.com
 
 backend meshblu-websocket
@@ -47,7 +55,13 @@ backend meshblu-websocket
   option http-server-close
   option forceclose
   option httpchk GET /healthcheck
-  server meshblu-websocket 172.17.42.1:61723 check-send-proxy send-proxy
+EOF
+
+for SERVER in $SERVERS; do
+  echo "server meshblu-websocket $SERVER:61723 check-send-proxy send-proxy check inter 10s"
+done
+
+cat <<EOF
   http-request set-header Host meshblu.octoblu.com
 
 backend meshblu-socket-io
@@ -61,13 +75,25 @@ backend meshblu-socket-io
   option http-server-close
   option forceclose
   option httpchk GET /healthcheck
-  server meshblu-socket-io 172.17.42.1:61723 check-send-proxy send-proxy
+EOF
+
+for SERVER in $SERVERS; do
+  echo "server meshblu-socket-io $SERVER:61723 check-send-proxy send-proxy check inter 10s"
+done
+
+cat <<EOF
   http-request set-header Host meshblu.octoblu.com
 
 backend meshblu-mqtt
   mode tcp
   balance leastconn
-  server meshblu-mqtt 172.17.42.1:52377
+EOF
+
+for SERVER in $SERVERS; do
+  echo "server meshblu-mqtt $SERVER:52377"
+done
+
+cat <<EOF
 
 frontend http-in
   bind :80 accept-proxy
@@ -88,3 +114,4 @@ frontend mqtt-in
   bind :1883 accept-proxy
 
   default_backend meshblu-mqtt
+EOF

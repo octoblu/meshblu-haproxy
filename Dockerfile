@@ -1,3 +1,4 @@
-FROM haproxy:1.5
-COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
-CMD ["haproxy", "-d", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
+FROM haproxy:1.6
+ADD run.sh .
+ADD haproxy.cfg.sh .
+CMD ["./run.sh"]
