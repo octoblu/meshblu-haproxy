@@ -47,7 +47,6 @@ cat <<EOF
 
 backend meshblu-websocket
   balance source
-  appsession MESHBLUSRV len 66 timeout 24h request-learn prefix
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
@@ -60,7 +59,7 @@ backend meshblu-websocket
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-websocket-$SERVER $SERVER:61723 cookie check-send-proxy send-proxy check inter 10s"
+  echo "server meshblu-websocket-$SERVER $SERVER:61723 cookie meshblu-websocket-$SERVER check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
@@ -68,7 +67,6 @@ cat <<EOF
 
 backend meshblu-socket-io
   balance source
-  appsession MESHBLUSRV len 66 timeout 24h request-learn prefix
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
@@ -81,7 +79,7 @@ backend meshblu-socket-io
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-socket-io-$SERVER $SERVER:61723 cookie check-send-proxy send-proxy check inter 10s"
+  echo "server meshblu-socket-io-$SERVER $SERVER:61723 cookie meshblu-socket-io-$SERVER check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
