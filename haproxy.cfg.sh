@@ -29,7 +29,7 @@ backend meshblu-http
   option redispatch
   option forwardfor
   option httpchk GET /healthcheck
-  server meshblu-http meshblu-messages.octoblu.com:80 cookie meshblu-websocket-$SERVER
+  server meshblu-http meshblu-messages.octoblu.com:80 cookie meshblu-http
   http-request set-header Host meshblu-messages.octoblu.com
 
 backend meshblu-original-flavor
