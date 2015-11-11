@@ -40,14 +40,32 @@ backend meshblu-original-flavor
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-original-flavor-$SERVER $SERVER:61723 cookie meshblu-websocket-$SERVER check-send-proxy send-proxy check inter 10s"
+  echo "server meshblu-original-flavor-$SERVER $SERVER:61723 cookie meshblu-$SERVER check-send-proxy send-proxy check inter 10s"
+done
+
+cat <<EOF
+  http-request set-header Host meshblu.octoblu.com
+
+backend meshblu-long-lasting
+  balance leastconn
+  timeout queue 5000
+  timeout server 86400000
+  timeout connect 86400000
+  timeout check 1s
+  option redispatch
+  option forwardfor
+  option httpchk GET /healthcheck
+EOF
+
+for SERVER in $SERVERS; do
+  echo "server meshblu-long-lasting-$SERVER $SERVER:61723 cookie meshblu-$SERVER check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
   http-request set-header Host meshblu.octoblu.com
 
 backend meshblu-websocket
-  balance source
+  balance leastconn
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
@@ -67,7 +85,7 @@ cat <<EOF
   http-request set-header Host meshblu.octoblu.com
 
 backend meshblu-socket-io
-  balance source
+  balance leastconn
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
@@ -102,12 +120,14 @@ frontend http-in
 
   acl use-meshblu-http path_reg ^/devices/.+/subscriptions$
   acl use-meshblu-http path_beg /messages
+  acl use-meshblu-long-lasting path_beg /subscribe /data
   acl use-meshblu-socket-io path_beg /socket.io
   acl use-meshblu-websocket hdr(Upgrade) -i WebSocket
 
   use_backend meshblu-websocket if use-meshblu-websocket
   use_backend meshblu-socket-io if use-meshblu-socket-io
   use_backend meshblu-http if use-meshblu-http
+  use_backend meshblu-long-lasting if use-meshblu-long-lasting
 
   default_backend meshblu-original-flavor
 
