@@ -22,7 +22,15 @@ defaults
   option httpchk                # enable HTTP protocol to check on servers health
   stats auth opsworks:0ct0b1u2014
   stats uri /haproxy?stats
-  cookie MESHBLUSRV insert indirect nocache
+
+peers mypeers
+EOF
+
+for SERVER in $SERVERS; do
+  echo "  peer $SERVER:59890"
+done
+
+cat <<EOF
 
 backend meshblu-http
   balance leastconn
@@ -40,7 +48,7 @@ backend meshblu-original-flavor
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-original-flavor-$SERVER $SERVER:61723 cookie meshblu-$SERVER check-send-proxy send-proxy check inter 10s"
+  echo "  server meshblu-$SERVER $SERVER:61723 check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
@@ -58,7 +66,7 @@ backend meshblu-long-lasting
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-long-lasting-$SERVER $SERVER:61723 cookie meshblu-$SERVER check-send-proxy send-proxy check inter 10s"
+  echo "  server meshblu-$SERVER $SERVER:61723 check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
@@ -78,7 +86,7 @@ backend meshblu-websocket
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-websocket-$SERVER $SERVER:61723 cookie meshblu-websocket-$SERVER check-send-proxy send-proxy check inter 10s"
+  echo "  server meshblu-$SERVER $SERVER:61723 check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
@@ -95,10 +103,15 @@ backend meshblu-socket-io
   option http-server-close
   option forceclose
   option httpchk GET /healthcheck
+
+  stick-table type string len 40 size 10M expire 1m peers mypeers
+  stick store-response set-cookie(io)
+  stick on cookie(io)
+  stick on url_param(sid)
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-socket-io-$SERVER $SERVER:61723 cookie meshblu-socket-io-$SERVER check-send-proxy send-proxy check inter 10s"
+  echo "  server meshblu-$SERVER $SERVER:61723 check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
@@ -110,7 +123,7 @@ backend meshblu-mqtt
 EOF
 
 for SERVER in $SERVERS; do
-  echo "server meshblu-mqtt-$SERVER $SERVER:52377"
+  echo "  server meshblu-$SERVER $SERVER:52377"
 done
 
 cat <<EOF
@@ -124,10 +137,10 @@ frontend http-in
   acl use-meshblu-socket-io path_beg /socket.io
   acl use-meshblu-websocket hdr(Upgrade) -i WebSocket
 
-  use_backend meshblu-websocket if use-meshblu-websocket
   use_backend meshblu-socket-io if use-meshblu-socket-io
-  use_backend meshblu-http if use-meshblu-http
+  use_backend meshblu-websocket if use-meshblu-websocket
   use_backend meshblu-long-lasting if use-meshblu-long-lasting
+  use_backend meshblu-http if use-meshblu-http
 
   default_backend meshblu-original-flavor
 
