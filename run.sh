@@ -6,4 +6,4 @@ if [ -z "$SERVERS" ]; then
 fi
 
 ./haproxy.cfg.sh > /usr/local/etc/haproxy/haproxy.cfg
-haproxy -f /usr/local/etc/haproxy/haproxy.cfg
+haproxy -f /usr/local/etc/haproxy/haproxy.cfg -L $SERVER_NAME

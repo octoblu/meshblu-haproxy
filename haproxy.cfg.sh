@@ -27,7 +27,7 @@ peers mypeers
 EOF
 
 for SERVER in $SERVERS; do
-  echo "  peer $SERVER:59890"
+  echo "  peer $SERVER $SERVER:59890"
 done
 
 cat <<EOF
