@@ -27,7 +27,11 @@ peers mypeers
 EOF
 
 for SERVER in $SERVERS; do
-  echo "  peer $SERVER $SERVER:59890"
+  SERVER_IP=$SERVER
+  if [ "$SERVER_NAME" == "$SERVER" ]; then
+    SERVER_IP=0.0.0.0
+  fi
+  echo "  peer $SERVER $SERVER_IP:59890"
 done
 
 cat <<EOF
