@@ -111,7 +111,7 @@ backend meshblu-socket-io
 EOF
 
 for SERVER in $SERVERS; do
-  echo "  server meshblu-$SERVER $SERVER:61723 check-send-proxy send-proxy check inter 10s"
+  echo "  server meshblu-$SERVER $SERVER:61933 check-send-proxy send-proxy check inter 10s"
 done
 
 cat <<EOF
