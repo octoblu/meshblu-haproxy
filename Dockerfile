@@ -8,6 +8,7 @@ RUN apt-get update && \
 EXPOSE 1883
 EXPOSE 59890
 
+ADD stick-table.sh .
 ADD run.sh .
 ADD haproxy.cfg.sh .
 CMD ["./run.sh"]
