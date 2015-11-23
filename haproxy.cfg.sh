@@ -1,4 +1,15 @@
 #!/bin/bash
+
+USE_PROXY_PROTOCOL=${USE_PROXY_PROTOCOL:-"true"}
+
+if [ "$USE_PROXY_PROTOCOL" == "true" ]; then
+  PROXY_SERVER_ARGS="check-send-proxy send-proxy"
+  PROXY_BIND_ARGS="accept-proxy"
+else
+  PROXY_SERVER_ARGS=""
+  PROXY_BIND_ARGS=""
+fi
+
 cat <<EOF
 global
   stats socket /tmp/haproxy.sock
@@ -52,7 +63,7 @@ backend meshblu-original-flavor
 EOF
 
 for SERVER in $SERVERS; do
-  echo "  server meshblu-$SERVER $SERVER:61723 check-send-proxy send-proxy check inter 10s"
+  echo "  server meshblu-$SERVER $SERVER:61723 $PROXY_ARGS check inter 10s"
 done
 
 cat <<EOF
@@ -70,7 +81,7 @@ backend meshblu-long-lasting
 EOF
 
 for SERVER in $SERVERS; do
-  echo "  server meshblu-$SERVER $SERVER:61723 check-send-proxy send-proxy check inter 10s"
+  echo "  server meshblu-$SERVER $SERVER:61723 $PROXY_ARGS check inter 10s"
 done
 
 cat <<EOF
@@ -90,7 +101,7 @@ backend meshblu-websocket
 EOF
 
 for SERVER in $SERVERS; do
-  echo "  server meshblu-$SERVER $SERVER:61723 check-send-proxy send-proxy check inter 10s"
+  echo "  server meshblu-$SERVER $SERVER:61723 $PROXY_ARGS check inter 10s"
 done
 
 cat <<EOF
@@ -130,11 +141,11 @@ for SERVER in $SERVERS; do
   echo "  server meshblu-$SERVER $SERVER:52377"
 done
 
+echo ""
+echo "frontend http-in"
+  echo "  bind :80 $PROXY_BIND_ARGS"
+
 cat <<EOF
-
-frontend http-in
-  bind :80 accept-proxy
-
   acl use-meshblu-http path_reg ^/devices/.+/subscriptions$
   acl use-meshblu-http path_beg /messages
   acl use-meshblu-long-lasting path_beg /subscribe /data
@@ -150,7 +161,9 @@ frontend http-in
 
 frontend mqtt-in
   mode tcp
-  bind :1883 accept-proxy
+EOF
+  echo "  bind :1883 $PROXY_BIND_ARGS"
+cat <<EOF
 
   default_backend meshblu-mqtt
 EOF
