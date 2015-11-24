@@ -34,16 +34,7 @@ defaults
   stats auth opsworks:0ct0b1u2014
   stats uri /haproxy?stats
 
-peers mypeers
 EOF
-
-for SERVER in $SERVERS; do
-  SERVER_IP=$SERVER
-  if [ "$SERVER_NAME" == "$SERVER" ]; then
-    SERVER_IP=0.0.0.0
-  fi
-  echo "  peer $SERVER $SERVER_IP:59890"
-done
 
 cat <<EOF
 
