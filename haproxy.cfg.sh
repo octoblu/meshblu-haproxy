@@ -110,7 +110,7 @@ backend meshblu-socket-io
   option forceclose
   option httpchk GET /healthcheck
 
-  stick-table type string len 40 size 10M expire 1m peers mypeers
+  stick-table type string len 40 size 20M expire 2m
   stick store-response set-cookie(io)
   stick on cookie(io)
   stick on url_param(sid)
