@@ -139,6 +139,7 @@ echo "frontend http-in"
 cat <<EOF
   acl use-meshblu-http path_reg ^/devices/.+/subscriptions$
   acl use-meshblu-http path_beg /messages
+  acl use-meshblu-http path_beg /v2/whoami
   acl use-meshblu-long-lasting path_beg /subscribe /data
   acl use-meshblu-socket-io path_beg /socket.io
   acl use-meshblu-websocket hdr(Upgrade) -i WebSocket
