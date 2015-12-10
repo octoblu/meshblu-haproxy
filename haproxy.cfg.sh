@@ -39,7 +39,7 @@ EOF
 cat <<EOF
 
 backend meshblu-http
-  balance leastconn
+  balance roundrobin
   option redispatch
   option forwardfor
   option httpchk GET /healthcheck
@@ -47,7 +47,7 @@ backend meshblu-http
   http-request set-header Host meshblu-messages.octoblu.com
 
 backend meshblu-original-flavor
-  balance leastconn
+  balance roundrobin
   option redispatch
   option forwardfor
   option httpchk GET /healthcheck
@@ -61,7 +61,7 @@ cat <<EOF
   http-request set-header Host meshblu.octoblu.com
 
 backend meshblu-long-lasting
-  balance leastconn
+  balance roundrobin
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
@@ -79,7 +79,7 @@ cat <<EOF
   http-request set-header Host meshblu.octoblu.com
 
 backend meshblu-websocket
-  balance leastconn
+  balance roundrobin
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
@@ -99,7 +99,7 @@ cat <<EOF
   http-request set-header Host meshblu.octoblu.com
 
 backend meshblu-socket-io
-  balance leastconn
+  balance roundrobin
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
@@ -125,7 +125,7 @@ cat <<EOF
 
 backend meshblu-mqtt
   mode tcp
-  balance leastconn
+  balance roundrobin
 EOF
 
 for SERVER in $SERVERS; do
