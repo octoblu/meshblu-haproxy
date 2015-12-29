@@ -140,6 +140,7 @@ cat <<EOF
   acl use-meshblu-http path_reg ^/devices/.+/subscriptions$
   acl use-meshblu-http path_reg ^/v2/devices/.+$ method GET
   acl use-meshblu-http path_reg ^/devices/.+$ method GET
+  acl use-meshblu-http path_reg ^/devices/.+/tokens$ method DELETE
   acl use-meshblu-http path_reg ^/v3/devices/.+$
 
   acl use-meshblu-http path_beg /messages
