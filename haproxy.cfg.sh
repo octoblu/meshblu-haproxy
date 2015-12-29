@@ -137,11 +137,12 @@ echo "frontend http-in"
   echo "  bind :80 $PROXY_BIND_ARGS"
 
 cat <<EOF
-  acl use-meshblu-http path_reg ^/devices/.+/subscriptions$
-  acl use-meshblu-http path_reg ^/v2/devices/.+$ method GET
-  acl use-meshblu-http path_reg ^/devices/.+$ method GET
-  acl use-meshblu-http path_reg ^/devices/.+/tokens$ method DELETE
-  acl use-meshblu-http path_reg ^/v3/devices/.+$
+  acl is-delete method DELETE
+  acl use-meshblu-http path_reg ^/devices/[^/]+/subscriptions$
+  acl use-meshblu-http-v2-get-devices path_reg ^/v2/devices/[^/]+$
+  acl use-meshblu-http-get-devices path_reg ^/devices/[^/]+$
+  acl use-meshblu-http-delete_tokens path_reg ^/devices/[^/]+/tokens$
+  acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
 
   acl use-meshblu-http path_beg /messages
   acl use-meshblu-http path_beg /v2/whoami
@@ -152,6 +153,9 @@ cat <<EOF
   use_backend meshblu-socket-io if use-meshblu-socket-io
   use_backend meshblu-websocket if use-meshblu-websocket
   use_backend meshblu-long-lasting if use-meshblu-long-lasting
+  use_backend meshblu-http if METH_GET use-meshblu-http-v2-get-devices
+  use_backend meshblu-http if METH_GET use-meshblu-http-get-devices
+  use_backend meshblu-http if is-delete use-meshblu-http-delete_tokens
   use_backend meshblu-http if use-meshblu-http
 
   default_backend meshblu-original-flavor
