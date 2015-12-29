@@ -141,8 +141,10 @@ cat <<EOF
   acl use-meshblu-http path_reg ^/devices/[^/]+/subscriptions$
   acl use-meshblu-http-v2-get-devices path_reg ^/v2/devices/[^/]+$
   acl use-meshblu-http-get-devices path_reg ^/devices/[^/]+$
-  acl use-meshblu-http-delete_tokens path_reg ^/devices/[^/]+/tokens$
+  acl use-meshblu-http-delete-tokens path_reg ^/devices/[^/]+/tokens$
+
   acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
+  acl use-meshblu-http path_reg ^/search/devices$
 
   acl use-meshblu-http path_beg /messages
   acl use-meshblu-http path_beg /v2/whoami
@@ -155,7 +157,7 @@ cat <<EOF
   use_backend meshblu-long-lasting if use-meshblu-long-lasting
   use_backend meshblu-http if METH_GET use-meshblu-http-v2-get-devices
   use_backend meshblu-http if METH_GET use-meshblu-http-get-devices
-  use_backend meshblu-http if is-delete use-meshblu-http-delete_tokens
+  use_backend meshblu-http if is-delete use-meshblu-http-delete-tokens
   use_backend meshblu-http if use-meshblu-http
 
   default_backend meshblu-original-flavor
