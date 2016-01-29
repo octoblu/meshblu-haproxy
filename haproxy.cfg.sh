@@ -92,7 +92,7 @@ backend meshblu-websocket
 EOF
 
 for SERVER in $SERVERS; do
-  echo "  server meshblu-$SERVER $SERVER:61723 $PROXY_ARGS check inter 10s"
+  echo "  server meshblu-$SERVER $SERVER:50671 $PROXY_ARGS check inter 10s"
 done
 
 cat <<EOF
