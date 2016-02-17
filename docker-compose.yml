@@ -1,18 +1,16 @@
-version: '2'
-services:
-  meshblu:
-    volumes:
-    - .:/usr/src/whatever
+meshblu:
+  container_name: "meshblu"
+  volumes:
+  - .:/usr/src/whatever
 
-    container_name: "meshblu"
-    build:
-      context: .
-      dockerfile: "./Dockerfile-dev"
+  build: "."
+  dockerfile: "./Dockerfile-dev"
 
-    dns: 192.168.99.1
-    ports:
-     - "80"
+  dns: "192.168.99.1"
 
-    environment:
-      SERVERS: meshblu-old.octoblu.dev
-      SERVER_NAME: meshblu
+  ports:
+   - "80"
+
+  environment:
+    SERVERS: meshblu-old.octoblu.dev
+    SERVER_NAME: meshblu
