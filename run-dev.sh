@@ -10,5 +10,5 @@ if [ -z "$SERVER_NAME" ]; then
   exit 1
 fi
 
-./haproxy.cfg.sh > /usr/local/etc/haproxy/haproxy.cfg
+./haproxy.cfg-dev.sh > /usr/local/etc/haproxy/haproxy.cfg
 haproxy -f /usr/local/etc/haproxy/haproxy.cfg -L $SERVER_NAME
