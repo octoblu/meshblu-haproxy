@@ -23,12 +23,4 @@ backend nodes
   server web01 meshblu-old.octoblu.dev:80 check
   http-request set-header Host meshblu-old.octoblu.dev
 
-  listen stats
-    bind *:1936
-    mode http
-    stats enable
-    stats uri /
-    stats hide-version
-    stats auth a:a
-
 EOF
