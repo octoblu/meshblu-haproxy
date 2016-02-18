@@ -1,0 +1,16 @@
+meshblu:
+  container_name: "meshblu"
+  volumes:
+  - .:/usr/src/whatever
+
+  build: "."
+  dockerfile: "./Dockerfile-dev"
+
+  dns: "192.168.99.1"
+
+  ports:
+   - "80"
+
+  environment:
+    SERVERS: meshblu-old.octoblu.dev
+    SERVER_NAME: meshblu
