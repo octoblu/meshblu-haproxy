@@ -39,7 +39,7 @@ backend meshblu-old
 
 backend meshblu-http
   option forwardfor
-  server meshblu-http meshblu-messages.octoblu.dev:80 cookie meshblu-http
-  http-request set-header Host meshblu-messages.octoblu.dev
+  server meshblu-http meshblu-server-http.octoblu.dev:80 cookie meshblu-http
+  http-request set-header Host meshblu-server-http.octoblu.dev
 
 EOF
