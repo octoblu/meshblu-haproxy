@@ -17,8 +17,8 @@ frontend http
   bind *:80
   mode http
 
-  acl is-delete method DELETE
-  acl use-meshblu-http path_reg ^/devices/[^/]+/subscriptions$
+  acl is-delete method DELETE  
+  acl use-meshblu-http path_reg ^/v2/devices/[^/]+/subscriptions$
   acl use-meshblu-http-delete-tokens path_reg ^/devices/[^/]+/tokens$
 
   acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
