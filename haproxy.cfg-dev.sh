@@ -17,8 +17,13 @@ frontend http
   bind *:80
   mode http
 
-  acl is-delete method DELETE  
+  acl is-delete method DELETE
+  acl is-get method GET
+  acl is-patch method PATCH
+  acl is-put method PUT
   acl use-meshblu-http path_reg ^/v2/devices/[^/]+/subscriptions$
+  acl use-meshblu-http-v2-devices path_reg ^/v2/devices/[^/]+$
+  acl use-meshblu-http-devices path_reg ^/devices/[^/]+$
   acl use-meshblu-http-delete-tokens path_reg ^/devices/[^/]+/tokens$
 
   acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
@@ -28,6 +33,13 @@ frontend http
   acl use-meshblu-http path_beg /v2/whoami
 
   use_backend meshblu-http if is-delete use-meshblu-http-delete-tokens
+  use_backend meshblu-http if is-get use-meshblu-http-v2-devices
+  use_backend meshblu-http if is-get use-meshblu-http-devices
+
+  use_backend meshblu-http if is-patch use-meshblu-http-v2-devices
+  use_backend meshblu-http if is-put use-meshblu-http-v2-devices
+  use_backend meshblu-http if is-put use-meshblu-http-devices
+
   use_backend meshblu-http if use-meshblu-http
 
   default_backend meshblu-old
