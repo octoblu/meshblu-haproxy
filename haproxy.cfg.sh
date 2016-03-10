@@ -145,7 +145,7 @@ cat <<EOF
   acl use-meshblu-http-v2-devices path_reg ^/v2/devices/[^/]+$
   acl use-meshblu-http-devices path_reg ^/devices/[^/]+$
   acl use-meshblu-http-delete-tokens path_reg ^/devices/[^/]+/tokens$
-  acl use-meshblu-http-get-global-public-key path_reg ^/publicKey$
+  acl use-meshblu-http-get-global-public-key path_reg ^/publickey$
 
   acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
   acl use-meshblu-http path_reg ^/search/devices$
