@@ -25,6 +25,7 @@ frontend http
   acl use-meshblu-http-v2-devices path_reg ^/v2/devices/[^/]+$
   acl use-meshblu-http-devices path_reg ^/devices/[^/]+$
   acl use-meshblu-http-delete-tokens path_reg ^/devices/[^/]+/tokens$
+  acl use-meshblu-http-get-global-public-key path_reg ^/publicKey$
 
   acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
   acl use-meshblu-http path_reg ^/search/devices$
@@ -35,6 +36,7 @@ frontend http
   use_backend meshblu-http if is-delete use-meshblu-http-delete-tokens
   use_backend meshblu-http if is-get use-meshblu-http-v2-devices
   use_backend meshblu-http if is-get use-meshblu-http-devices
+  use_backend meshblu-http if is-get use-meshblu-http-get-global-public-key
 
   use_backend meshblu-http if is-patch use-meshblu-http-v2-devices
   use_backend meshblu-http if is-put use-meshblu-http-v2-devices
