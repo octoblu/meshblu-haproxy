@@ -1,2 +1,5 @@
 meshblu-haproxy.dockerfile-dev
 npmrc-dev
+
+# dev files
+.*-dev
