@@ -21,12 +21,15 @@ frontend http
   acl is-get method GET
   acl is-patch method PATCH
   acl is-put method PUT
+  acl is-post method POST
+
   acl use-meshblu-http path_reg ^/v2/devices/[^/]+/subscriptions$
   acl use-meshblu-http-v2-devices path_reg ^/v2/devices/[^/]+$
   acl use-meshblu-http-devices path_reg ^/devices/[^/]+$
   acl use-meshblu-http-delete-tokens path_reg ^/devices/[^/]+/tokens$
   acl use-meshblu-http-get-global-public-key path_reg ^/publickey$
   acl use-meshblu-http-get-status path_reg ^/status$
+  acl use-meshblu-http-register-device path_reg ^/devices$
 
   acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
   acl use-meshblu-http path_reg ^/search/devices$
@@ -39,6 +42,7 @@ frontend http
   use_backend meshblu-http if is-get use-meshblu-http-devices
   use_backend meshblu-http if is-get use-meshblu-http-get-global-public-key
   use_backend meshblu-http if is-get use-meshblu-http-get-status
+  use_backend meshblu-http if is-post use-meshblu-http-register-device
 
   use_backend meshblu-http if is-patch use-meshblu-http-v2-devices
   use_backend meshblu-http if is-put use-meshblu-http-v2-devices
