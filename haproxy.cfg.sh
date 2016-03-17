@@ -45,6 +45,8 @@ backend meshblu-http
   option httpchk GET /healthcheck
   server meshblu-http meshblu-messages.octoblu.com:80 cookie meshblu-http
   http-request set-header Host meshblu-messages.octoblu.com
+  http-request add-header X-Forwarded-Proto https if { ssl_fc }
+  http-request set-header X-Forwarded-Port %[dst_port]
 
 backend meshblu-original-flavor
   balance roundrobin
@@ -77,6 +79,8 @@ done
 
 cat <<EOF
   http-request set-header Host meshblu.octoblu.com
+  http-request add-header X-Forwarded-Proto https if { ssl_fc }
+  http-request set-header X-Forwarded-Port %[dst_port]
 
 backend meshblu-websocket
   balance roundrobin

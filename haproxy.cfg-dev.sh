@@ -8,6 +8,7 @@ defaults
   mode    http
   option  httplog
   option  dontlognull
+  option  redispatch
   timeout client  50000
   timeout queue 5000
   timeout server 86400000
@@ -39,6 +40,7 @@ frontend http
   acl use-meshblu-http path_reg ^/search/devices$
 
   acl use-meshblu-http path_beg /messages
+  acl use-meshblu-long-lasting path_beg /subscribe
   acl use-meshblu-http path_beg /v2/whoami
 
   use_backend meshblu-http if is-delete use-meshblu-http-delete-tokens
@@ -58,6 +60,8 @@ frontend http
 
   use_backend meshblu-http if use-meshblu-http
 
+  use_backend meshblu-long-lasting if use-meshblu-long-lasting
+
   default_backend meshblu-old
 
 backend meshblu-old
@@ -67,7 +71,21 @@ backend meshblu-old
 
 backend meshblu-http
   option forwardfor
-  server meshblu-http meshblu-server-http.octoblu.dev:80 cookie meshblu-http
+  server meshblu-http meshblu-server-http.octoblu.dev:80
   http-request set-header Host meshblu-server-http.octoblu.dev
+  http-request add-header X-Forwarded-Proto https if { ssl_fc }
+  http-request set-header X-Forwarded-Port %[dst_port]
+
+backend meshblu-long-lasting
+  balance roundrobin
+  timeout queue 5000
+  timeout server 86400000
+  timeout connect 86400000
+  timeout check 1s
+  option redispatch
+  option httpchk HEAD / HTTP/1.1\r\nHost:localhost
+  server meshblu-ll meshblu-server-http.octoblu.dev:80
+  http-request add-header X-Forwarded-Proto https if { ssl_fc }
+  http-request set-header X-Forwarded-Port %[dst_port]
 
 EOF
