@@ -27,6 +27,7 @@ frontend http
   acl use-meshblu-http path_reg ^/v2/devices/[^/]+/subscriptions$
   acl use-meshblu-http-v2-devices path_reg ^/v2/devices/[^/]+$
   acl use-meshblu-http-devices path_reg ^/devices/[^/]+$
+  acl use-meshblu-http-claim-device path_reg ^/claimdevice/[^/]+$
   acl use-meshblu-http-v2-get-devices path_reg ^/v2/devices$
   acl use-meshblu-http-v1-get-devices path_reg ^/devices$
   acl use-meshblu-http-my-devices path_reg ^/mydevices$
@@ -53,6 +54,7 @@ frontend http
   use_backend meshblu-http if is-get use-meshblu-http-v2-get-devices
   use_backend meshblu-http if is-get use-meshblu-http-v1-get-devices
   use_backend meshblu-http if is-get use-meshblu-http-my-devices
+  use_backend meshblu-http if is-post use-meshblu-http-claim-device
 
   use_backend meshblu-http if is-patch use-meshblu-http-v2-devices
   use_backend meshblu-http if is-put use-meshblu-http-v2-devices
