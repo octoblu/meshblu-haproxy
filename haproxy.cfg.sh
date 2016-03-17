@@ -148,6 +148,7 @@ cat <<EOF
   acl use-meshblu-http-v2-get-devices path_reg ^/v2/devices$
   acl use-meshblu-http-v1-get-devices path_reg ^/devices$
   acl use-meshblu-http-devices path_reg ^/devices/[^/]+$
+  acl use-meshblu-http-my-devices path_reg ^/mydevices$
   acl use-meshblu-http-delete-tokens path_reg ^/devices/[^/]+/tokens$
   acl use-meshblu-http-get-global-public-key path_reg ^/publickey$
   acl use-meshblu-http-get-status path_reg ^/status$
@@ -177,6 +178,7 @@ cat <<EOF
   use_backend meshblu-http if is-delete use-meshblu-http-unregister-device
   use_backend meshblu-http if is-get use-meshblu-http-v2-get-devices
   use_backend meshblu-http if is-get use-meshblu-http-v1-get-devices
+  use_backend meshblu-http if is-get use-meshblu-http-my-devices
 
   use_backend meshblu-http if is-patch use-meshblu-http-v2-devices
   use_backend meshblu-http if is-put use-meshblu-http-v2-devices
