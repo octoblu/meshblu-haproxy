@@ -30,6 +30,7 @@ frontend http
   acl use-meshblu-http-get-global-public-key path_reg ^/publickey$
   acl use-meshblu-http-get-status path_reg ^/status$
   acl use-meshblu-http-register-device path_reg ^/devices$
+  acl use-meshblu-http-unregister-device path_reg ^/devices/[^/]+$
 
   acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
   acl use-meshblu-http path_reg ^/search/devices$
@@ -43,6 +44,7 @@ frontend http
   use_backend meshblu-http if is-get use-meshblu-http-get-global-public-key
   use_backend meshblu-http if is-get use-meshblu-http-get-status
   use_backend meshblu-http if is-post use-meshblu-http-register-device
+  use_backend meshblu-http if is-delete use-meshblu-http-unregister-device
 
   use_backend meshblu-http if is-patch use-meshblu-http-v2-devices
   use_backend meshblu-http if is-put use-meshblu-http-v2-devices
