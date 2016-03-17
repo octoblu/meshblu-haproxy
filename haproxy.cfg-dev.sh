@@ -36,6 +36,8 @@ frontend http
   acl use-meshblu-http-get-status path_reg ^/status$
   acl use-meshblu-http-register-device path_reg ^/devices$
   acl use-meshblu-http-unregister-device path_reg ^/devices/[^/]+$
+  acl use-meshblu-http-new-authenticate path_reg ^/authenticate$
+  acl use-meshblu-http-old-authenticate path_reg ^/authenticate/[^/]+$
 
   acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
   acl use-meshblu-http path_reg ^/search/devices$
@@ -55,6 +57,8 @@ frontend http
   use_backend meshblu-http if is-get use-meshblu-http-v1-get-devices
   use_backend meshblu-http if is-get use-meshblu-http-my-devices
   use_backend meshblu-http if is-post use-meshblu-http-claim-device
+  use_backend meshblu-http if is-post use-meshblu-http-new-authenticate
+  use_backend meshblu-http if is-get use-meshblu-http-old-authenticate
 
   use_backend meshblu-http if is-patch use-meshblu-http-v2-devices
   use_backend meshblu-http if is-put use-meshblu-http-v2-devices
