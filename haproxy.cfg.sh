@@ -161,6 +161,7 @@ cat <<EOF
   acl use-meshblu-http-unregister-device path_reg ^/devices/[^/]+$
   acl use-meshblu-http-new-authenticate path_reg ^/authenticate$
   acl use-meshblu-http-old-authenticate path_reg ^/authenticate/[^/]+$
+  acl use-meshblu-http-subscriptions path_reg ^/v2/devices/[^/]+/subscriptions/[^/]+/[^/]+$
 
   acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
   acl use-meshblu-http path_reg ^/search/devices$
@@ -190,6 +191,8 @@ cat <<EOF
   use_backend meshblu-http if is-post use-meshblu-http-claim-device
   use_backend meshblu-http if is-post use-meshblu-http-new-authenticate
   use_backend meshblu-http if is-get use-meshblu-http-old-authenticate
+  use_backend meshblu-http if is-post use-meshblu-http-subscriptions
+  use_backend meshblu-http if is-delete use-meshblu-http-subscriptions
 
   use_backend meshblu-http if is-patch use-meshblu-http-v2-devices
   use_backend meshblu-http if is-put use-meshblu-http-v2-devices
