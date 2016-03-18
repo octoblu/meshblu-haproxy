@@ -2,6 +2,8 @@
 cat <<EOF
 global
   debug
+  stats socket /tmp/haproxy.sock
+  maxconn 80000
 
 defaults
   log    global
@@ -29,27 +31,24 @@ backend meshblu-http
   http-request set-header X-Forwarded-Port %[dst_port]
 
 backend meshblu-original-flavor
-  balance roundrobin
   option redispatch
   option forwardfor
   server meshblu-old meshblu-old.octoblu.dev:80
   http-request set-header Host meshblu-old.octoblu.dev
 
 backend meshblu-long-lasting
-  balance roundrobin
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
   timeout check 1s
   option redispatch
   option forwardfor
-  server meshblu-long-lasting meshblu-old.octoblu.dev:80
+  server meshblu-ll meshblu-old.octoblu.dev:80
   http-request set-header Host meshblu-old.octoblu.dev
   http-request add-header X-Forwarded-Proto https if { ssl_fc }
   http-request set-header X-Forwarded-Port %[dst_port]
 
 backend meshblu-websocket
-  balance roundrobin
   timeout queue 5000
   timeout server 86400000
   timeout connect 86400000
@@ -58,8 +57,8 @@ backend meshblu-websocket
   no option httpclose
   option http-server-close
   option forceclose
-  server meshblu-websocket meshblu-old.octoblu.dev:80
-  http-request set-header Host meshblu-old.octoblu.dev
+  server meshblu-server-websocket meshblu-server-websocket.octoblu.dev:80
+  http-request set-header Host meshblu-server-websocket.octoblu.dev
 
 backend meshblu-socket-io
   timeout queue 5000
@@ -74,7 +73,7 @@ backend meshblu-socket-io
   stick store-response set-cookie(io)
   stick on cookie(io)
   stick on url_param(sid)
-  server meshblu-socket-io meshblu-old.octoblu.dev:80
+  server meshblu-server-socket-io meshblu-old.octoblu.dev:80
   http-request set-header Host meshblu-old.octoblu.dev
 
 frontend http-in
@@ -134,7 +133,6 @@ frontend http-in
   use_backend meshblu-http if is-post use-meshblu-http-subscriptions
   use_backend meshblu-http if is-delete use-meshblu-http-subscriptions
 
-
   use_backend meshblu-http if is-patch use-meshblu-http-v2-devices
   use_backend meshblu-http if is-put use-meshblu-http-v2-devices
   use_backend meshblu-http if is-put use-meshblu-http-devices
@@ -142,5 +140,4 @@ frontend http-in
   use_backend meshblu-http if use-meshblu-http
 
   default_backend meshblu-original-flavor
-
 EOF
