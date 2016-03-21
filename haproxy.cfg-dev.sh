@@ -73,8 +73,8 @@ backend meshblu-socket-io
   stick store-response set-cookie(io)
   stick on cookie(io)
   stick on url_param(sid)
-  server meshblu-server-socket-io meshblu-server-socket-io.octoblu.dev:80
-  http-request set-header Host meshblu-server-socket-io.octoblu.dev
+  server meshblu-server-socket-io meshblu-old.octoblu.dev:80
+  http-request set-header Host meshblu-old.octoblu.dev
 
 frontend http-in
   bind *:80
