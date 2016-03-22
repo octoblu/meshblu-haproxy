@@ -147,28 +147,19 @@ cat <<EOF
   acl is-put method PUT
   acl is-post method POST
 
+  acl use-meshblu-http path_beg /messages /v2/whoami /subscribe /publickey /status /authenticate /mydevices /claimdevice
+
   acl use-meshblu-http path_reg ^/v2/devices/[^/]+/subscriptions$
   acl use-meshblu-http-v2-devices path_reg ^/v2/devices/[^/]+$
   acl use-meshblu-http-v2-get-devices path_reg ^/v2/devices$
   acl use-meshblu-http-v1-get-devices path_reg ^/devices$
   acl use-meshblu-http-devices path_reg ^/devices/[^/]+$
-  acl use-meshblu-http-my-devices path_reg ^/mydevices$
-  acl use-meshblu-http-claim-device path_reg ^/claimdevice/[^/]+$
   acl use-meshblu-http-delete-tokens path_reg ^/devices/[^/]+/tokens$
-  acl use-meshblu-http-get-global-public-key path_reg ^/publickey$
-  acl use-meshblu-http-get-status path_reg ^/status$
   acl use-meshblu-http-register-device path_reg ^/devices$
   acl use-meshblu-http-unregister-device path_reg ^/devices/[^/]+$
-  acl use-meshblu-http-new-authenticate path_reg ^/authenticate$
-  acl use-meshblu-http-old-authenticate path_reg ^/authenticate/[^/]+$
   acl use-meshblu-http-subscriptions path_reg ^/v2/devices/[^/]+/subscriptions/[^/]+/[^/]+$
-
   acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
   acl use-meshblu-http path_reg ^/search/devices$
-
-  acl use-meshblu-http path_beg /messages
-  acl use-meshblu-http path_beg /v2/whoami
-  acl use-meshblu-http path_beg /subscribe
 
   acl use-meshblu-long-lasting path_beg /data
   acl use-meshblu-socket-io path_beg /socket.io
@@ -181,16 +172,10 @@ cat <<EOF
   use_backend meshblu-http if is-delete use-meshblu-http-delete-tokens
   use_backend meshblu-http if is-get use-meshblu-http-v2-devices
   use_backend meshblu-http if is-get use-meshblu-http-devices
-  use_backend meshblu-http if is-get use-meshblu-http-get-global-public-key
-  use_backend meshblu-http if is-get use-meshblu-http-get-status
   use_backend meshblu-http if is-post use-meshblu-http-register-device
   use_backend meshblu-http if is-delete use-meshblu-http-unregister-device
   use_backend meshblu-http if is-get use-meshblu-http-v2-get-devices
   use_backend meshblu-http if is-get use-meshblu-http-v1-get-devices
-  use_backend meshblu-http if is-get use-meshblu-http-my-devices
-  use_backend meshblu-http if is-post use-meshblu-http-claim-device
-  use_backend meshblu-http if is-post use-meshblu-http-new-authenticate
-  use_backend meshblu-http if is-get use-meshblu-http-old-authenticate
   use_backend meshblu-http if is-post use-meshblu-http-subscriptions
   use_backend meshblu-http if is-delete use-meshblu-http-subscriptions
 
