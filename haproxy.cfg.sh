@@ -34,10 +34,6 @@ defaults
   stats auth opsworks:0ct0b1u2014
   stats uri /haproxy?stats
 
-EOF
-
-cat <<EOF
-
 backend meshblu-http
   balance roundrobin
   option redispatch
@@ -45,40 +41,6 @@ backend meshblu-http
   option httpchk GET /healthcheck
   server meshblu-http meshblu-messages.octoblu.com:80 cookie meshblu-http
   http-request set-header Host meshblu-messages.octoblu.com
-  http-request add-header X-Forwarded-Proto https if { ssl_fc }
-  http-request set-header X-Forwarded-Port %[dst_port]
-
-backend meshblu-original-flavor
-  balance roundrobin
-  option redispatch
-  option forwardfor
-  option httpchk GET /healthcheck
-EOF
-
-for SERVER in $SERVERS; do
-  echo "  server meshblu-$SERVER $SERVER:61723 $PROXY_ARGS check inter 10s"
-done
-
-cat <<EOF
-  http-request set-header Host meshblu.octoblu.com
-
-backend meshblu-long-lasting
-  balance roundrobin
-  timeout queue 5000
-  timeout server 86400000
-  timeout connect 86400000
-  timeout check 1s
-  option redispatch
-  option forwardfor
-  option httpchk GET /healthcheck
-EOF
-
-for SERVER in $SERVERS; do
-  echo "  server meshblu-$SERVER $SERVER:61723 $PROXY_ARGS check inter 10s"
-done
-
-cat <<EOF
-  http-request set-header Host meshblu.octoblu.com
   http-request add-header X-Forwarded-Proto https if { ssl_fc }
   http-request set-header X-Forwarded-Port %[dst_port]
 
@@ -141,51 +103,13 @@ echo "frontend http-in"
   echo "  bind :80 $PROXY_BIND_ARGS"
 
 cat <<EOF
-  acl is-delete method DELETE
-  acl is-get method GET
-  acl is-patch method PATCH
-  acl is-put method PUT
-  acl is-post method POST
-
-  acl use-meshblu-http path_beg /messages /v2/whoami /subscribe /publickey /status /authenticate /mydevices /claimdevice
-
-  acl use-meshblu-http path_reg ^/v2/devices/[^/]+/subscriptions$
-  acl use-meshblu-http-v2-devices path_reg ^/v2/devices/[^/]+$
-  acl use-meshblu-http-v2-get-devices path_reg ^/v2/devices$
-  acl use-meshblu-http-v1-get-devices path_reg ^/devices$
-  acl use-meshblu-http-devices path_reg ^/devices/[^/]+$
-  acl use-meshblu-http-delete-tokens path_reg ^/devices/[^/]+/tokens$
-  acl use-meshblu-http-register-device path_reg ^/devices$
-  acl use-meshblu-http-unregister-device path_reg ^/devices/[^/]+$
-  acl use-meshblu-http-subscriptions path_reg ^/v2/devices/[^/]+/subscriptions/[^/]+/[^/]+$
-  acl use-meshblu-http path_reg ^/v3/devices/[^/]+$
-  acl use-meshblu-http path_reg ^/search/devices$
-
-  acl use-meshblu-long-lasting path_beg /data
   acl use-meshblu-socket-io path_beg /socket.io
   acl use-meshblu-websocket hdr(Upgrade) -i WebSocket
 
   use_backend meshblu-socket-io if use-meshblu-socket-io
   use_backend meshblu-websocket if use-meshblu-websocket
-  use_backend meshblu-long-lasting if use-meshblu-long-lasting
-
-  use_backend meshblu-http if is-delete use-meshblu-http-delete-tokens
-  use_backend meshblu-http if is-get use-meshblu-http-v2-devices
-  use_backend meshblu-http if is-get use-meshblu-http-devices
-  use_backend meshblu-http if is-post use-meshblu-http-register-device
-  use_backend meshblu-http if is-delete use-meshblu-http-unregister-device
-  use_backend meshblu-http if is-get use-meshblu-http-v2-get-devices
-  use_backend meshblu-http if is-get use-meshblu-http-v1-get-devices
-  use_backend meshblu-http if is-post use-meshblu-http-subscriptions
-  use_backend meshblu-http if is-delete use-meshblu-http-subscriptions
-
-  use_backend meshblu-http if is-patch use-meshblu-http-v2-devices
-  use_backend meshblu-http if is-put use-meshblu-http-v2-devices
-  use_backend meshblu-http if is-put use-meshblu-http-devices
-
-  use_backend meshblu-http if use-meshblu-http
-
-  default_backend meshblu-original-flavor
+  
+  default_backend meshblu-http
 
 frontend mqtt-in
   mode tcp
