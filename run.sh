@@ -10,6 +10,11 @@ if [ -z "$SERVER_NAME" ]; then
   exit 1
 fi
 
+if [ -z "$MQTT_URL" ]; then
+  echo "MQTT_URL not found, cowardly refusing to do anything"
+  exit 1
+fi
+
 function _term {
   echo "Caught SIGTERM signal!"
   kill -TERM "$child" 2>/dev/null

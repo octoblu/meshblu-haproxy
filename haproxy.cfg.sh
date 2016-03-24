@@ -1,15 +1,5 @@
 #!/bin/bash
 
-USE_PROXY_PROTOCOL=${USE_PROXY_PROTOCOL:-"true"}
-
-if [ "$USE_PROXY_PROTOCOL" == "true" ]; then
-  PROXY_SERVER_ARGS="check-send-proxy send-proxy"
-  PROXY_BIND_ARGS="accept-proxy"
-else
-  PROXY_SERVER_ARGS=""
-  PROXY_BIND_ARGS=""
-fi
-
 cat <<EOF
 global
   stats socket /tmp/haproxy.sock
@@ -93,29 +83,21 @@ backend meshblu-mqtt
   mode tcp
   balance roundrobin
 EOF
-
-for SERVER in $SERVERS; do
-  echo "  server meshblu-$SERVER $SERVER:52377"
-done
-
-echo ""
-echo "frontend http-in"
-  echo "  bind :80 $PROXY_BIND_ARGS"
-
+  echo "  server meshblu-mqtt $MQTT_URL"
 cat <<EOF
+
+frontend http-in
+  bind :80
   acl use-meshblu-socket-io path_beg /socket.io
   acl use-meshblu-websocket hdr(Upgrade) -i WebSocket
 
   use_backend meshblu-socket-io if use-meshblu-socket-io
   use_backend meshblu-websocket if use-meshblu-websocket
-  
+
   default_backend meshblu-http
 
 frontend mqtt-in
   mode tcp
-EOF
-  echo "  bind :1883 $PROXY_BIND_ARGS"
-cat <<EOF
-
+  bind :1883
   default_backend meshblu-mqtt
 EOF
