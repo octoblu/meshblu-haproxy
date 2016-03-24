@@ -10,8 +10,8 @@ if [ -z "$SERVER_NAME" ]; then
   exit 1
 fi
 
-if [ -z "$MQTT_URL" ]; then
-  echo "MQTT_URL not found, cowardly refusing to do anything"
+if [ -z "$MQTT_URI" ]; then
+  echo "MQTT_URI not found, cowardly refusing to do anything"
   exit 1
 fi
 

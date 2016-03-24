@@ -83,7 +83,7 @@ backend meshblu-mqtt
   mode tcp
   balance roundrobin
 EOF
-  echo "  server meshblu-mqtt $MQTT_URL"
+  echo "  server meshblu-mqtt $MQTT_URI"
 cat <<EOF
 
 frontend http-in
