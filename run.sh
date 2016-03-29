@@ -1,30 +1,33 @@
-#!/bin/bash
+#!/bin/sh
 
-if [ -z "$SERVERS" ]; then
-  echo "SERVERS not found, cowardly refusing to do anything"
-  exit 1
-fi
+assert_password() {
+  local password="$1"
 
-if [ -z "$SERVER_NAME" ]; then
-  echo "SERVER_NAME not found, cowardly refusing to do anything"
-  exit 1
-fi
-
-if [ -z "$MQTT_URI" ]; then
-  echo "MQTT_URI not found, cowardly refusing to do anything"
-  exit 1
-fi
-
-function _term {
-  echo "Caught SIGTERM signal!"
-  kill -TERM "$child" 2>/dev/null
+  if [ -z "$password" ]; then
+    echo "PASSWORD not found, cowardly refusing to do anything"
+    exit 1
+  fi
 }
 
-trap _term SIGTERM
+run_haproxy() {
+  haproxy -f /usr/local/etc/haproxy/haproxy.cfg &
+  child=$!
+  echo "Waiting for child process: $child"
+  wait "$child"
+}
 
-./haproxy.cfg.sh > /usr/local/etc/haproxy/haproxy.cfg
-haproxy -f /usr/local/etc/haproxy/haproxy.cfg -L $SERVER_NAME &
+write_haproxy() {
+  local password="$1"
 
-child=$!
-echo "Waiting for child process: $child"
-wait "$child"
+  cat ./haproxy.cfg | sed s/{{PASSWORD}}/${password}/g > /usr/local/etc/haproxy/haproxy.cfg
+}
+
+main(){
+  local password="${PASSWORD}"
+  assert_password "${password}"
+
+  write_haproxy "${password}"
+  run_haproxy
+}
+
+main $@
