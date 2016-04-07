@@ -3,10 +3,6 @@ global
   stats socket /tmp/haproxy.sock
   maxconn 80000
 
-resolvers dns
-  nameserver dns1 127.0.0.1:53
-  hold valid 2m
-
 defaults
   mode   http
   timeout client 60s            # Client and server timeout must match the longest
@@ -24,8 +20,8 @@ defaults
 backend meshblu-http
   option redispatch
   option forwardfor
-  server meshblu-http meshblu-http.octoblu.com:80 resolvers dns resolve-prefer ipv4
-  http-request set-header Host meshblu-http.octoblu.com
+  server meshblu-http meshblu-http.octoblu.dev:80
+  http-request set-header Host meshblu-http.octoblu.dev
   http-request add-header X-Forwarded-Proto https if { ssl_fc }
   http-request set-header X-Forwarded-Port %[dst_port]
 
@@ -38,7 +34,7 @@ backend meshblu-websocket
   no option httpclose
   option http-server-close
   option forceclose
-  server meshblu-websocket meshblu-websocket.octoblu.com:80 resolvers dns resolve-prefer ipv4
+  server meshblu-websocket meshblu-websocket.octoblu.dev:80
 
 backend meshblu-socket-io
   timeout queue 5000
@@ -49,7 +45,7 @@ backend meshblu-socket-io
   no option httpclose
   option http-server-close
   option forceclose
-  server meshblu-socket-io meshblu-socket-io.octoblu.com:80 resolvers dns resolve-prefer ipv4
+  server meshblu-socket-io meshblu-socket-io.octoblu.dev:80
 
 frontend http-in
   bind :80
