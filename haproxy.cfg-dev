@@ -4,6 +4,7 @@ global
   maxconn 80000
 
 defaults
+  log    global
   mode   http
   timeout client 60s            # Client and server timeout must match the longest
   timeout server 300s           # time we may wait for a response from the server.
@@ -13,6 +14,8 @@ defaults
   timeout tunnel 2h
   retries         3
   option redispatch
+  option httplog
+  option dontlognull
   option http-server-close      # enable HTTP connection closing on the server side
   option abortonclose           # enable early dropping of aborted requests from pending queue
   stats uri /haproxy?stats
@@ -35,6 +38,7 @@ backend meshblu-websocket
   option http-server-close
   option forceclose
   server meshblu-websocket meshblu-websocket.octoblu.dev:80
+  http-request set-header Host meshblu-websocket.octoblu.dev
 
 backend meshblu-socket-io
   timeout queue 5000
@@ -46,13 +50,12 @@ backend meshblu-socket-io
   option http-server-close
   option forceclose
   server meshblu-socket-io meshblu-socket-io.octoblu.dev:80
+  http-request set-header Host meshblu-socket-io.octoblu.dev
 
 frontend http-in
   bind :80
   acl use-meshblu-socket-io path_beg /socket.io
   acl use-meshblu-websocket hdr(Upgrade) -i WebSocket
-
   use_backend meshblu-socket-io if use-meshblu-socket-io
   use_backend meshblu-websocket if use-meshblu-websocket
-
   default_backend meshblu-http
